@@ -15,7 +15,7 @@ ALX Files Manager is a simple file management API built with Node.js, Express, a
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/alx-files_manager.git
+git clone https://github.com/alantiren/alx-files_manager.git
 ```
 
 2. Install dependencies:
