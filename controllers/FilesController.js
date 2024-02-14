@@ -1,6 +1,8 @@
+/* eslint-disable import/no-named-as-default */
+/* eslint-disable no-unused-vars */
 import { tmpdir } from 'os';
 import { promisify } from 'util';
-import Queue from 'bull';
+import Queue from 'bull/lib/queue';
 import { v4 as uuidv4 } from 'uuid';
 import {
   mkdir, writeFile, stat, existsSync, realpath,
@@ -25,7 +27,6 @@ const statAsync = promisify(stat);
 const realpathAsync = promisify(realpath);
 const MAX_FILES_PER_PAGE = 20;
 const fileQueue = new Queue('thumbnail generation');
-const userQueue = new Queue('userQueue');
 const NULL_ID = Buffer.alloc(24, '0').toString('utf-8');
 const isValidId = (id) => {
   const size = 24;
@@ -51,6 +52,11 @@ const isValidId = (id) => {
 };
 
 export default class FilesController {
+  /**
+   * Uploads a file.
+   * @param {Request} req The Express request object.
+   * @param {Response} res The Express response object.
+   */
   static async postUpload(req, res) {
     const { user } = req;
     const name = req.body ? req.body.name : null;
@@ -153,6 +159,11 @@ export default class FilesController {
     });
   }
 
+  /**
+   * Retrieves files associated with a specific user.
+   * @param {Request} req The Express request object.
+   * @param {Response} res The Express response object.
+   */
   static async getIndex(req, res) {
     const { user } = req;
     const parentId = req.query.parentId || ROOT_FOLDER_ID.toString();
@@ -247,6 +258,11 @@ export default class FilesController {
     });
   }
 
+  /**
+   * Retrieves the content of a file.
+   * @param {Request} req The Express request object.
+   * @param {Response} res The Express response object.
+   */
   static async getFile(req, res) {
     const user = await getUserFromXToken(req);
     const { id } = req.params;

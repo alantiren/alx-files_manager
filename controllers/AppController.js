@@ -1,28 +1,19 @@
-import dbClient from '../utils/db.js';
-import redisClient from '../utils/redis.js';
+/* eslint-disable import/no-named-as-default */
+import redisClient from '../utils/redis';
+import dbClient from '../utils/db';
 
 export default class AppController {
-  static async getStatus(req, res) {
-    const redisStatus = redisClient.isAlive();
-    const dbStatus = await dbClient.isAlive();
-
+  static getStatus(req, res) {
     res.status(200).json({
-      redis: redisStatus,
-      db: dbStatus,
+      redis: redisClient.isAlive(),
+      db: dbClient.isAlive(),
     });
   }
 
-  static async getStats(req, res) {
-    try {
-      const usersCount = await dbClient.nbUsers();
-      const filesCount = await dbClient.nbFiles();
-
-      res.status(200).json({
-        users: usersCount,
-        files: filesCount,
+  static getStats(req, res) {
+    Promise.all([dbClient.nbUsers(), dbClient.nbFiles()])
+      .then(([usersCount, filesCount]) => {
+        res.status(200).json({ users: usersCount, files: filesCount });
       });
-    } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
   }
 }
